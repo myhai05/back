@@ -8,7 +8,8 @@ router.post('/login', authController.signIn);
 router.get('/logout', authController.logout);
 
 
-router.post("/create", contactController.addContact);
+router.patch('/create', contactController.addContactHandler);
+
 
 
 module.exports = router; //il faut appeler le router en app.js

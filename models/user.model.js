@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema(//on crée une bibliothéque mongoose dan
       ],
       required: true,
     },
-
+     
   }
 );
 
@@ -55,6 +55,27 @@ userSchema.statics.login = async function(email, password) {
         }
     } else {
         throw new Error('Incorrect email'); // Si l'email n'est pas trouvé, lance une erreur
+    }
+};
+
+// Définition d'une méthode statique personnalisée pour ajouter un contact à un utilisateur
+userSchema.statics.addContact = async function(userId, contactData) {
+    try {
+        // Recherche de l'utilisateur dans la base de données
+        const user = await this.findById(userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        // Ajout du nouveau contact à la liste des contacts de l'utilisateur
+        user.contacts.push(contactData);
+
+        // Enregistrement des modifications dans la base de données
+        await user.save();
+
+        return user; // Renvoyer l'utilisateur mis à jour avec le nouveau contact ajouté
+    } catch (error) {
+        throw new Error(error.message);
     }
 };
 
