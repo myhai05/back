@@ -14,15 +14,20 @@ mongoose.connect('mongodb+srv://mmishk0501:12345@express.swgvavr.mongodb.net/')
         console.error('Erreur de connexion:', error);
     });
 
+    const corsOptions = {
+        origin: 'http://localhost:3000',
+        credentials: true,
+        'allowedHeaders': ['sessionId', 'Content-Type'],
+        'exposedHeaders': ['sessionId'],
+        'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        'preflightContinue': false
+      }
+      app.use(cors(corsOptions));
+
 
 app.use(bodyParser.json());
 
-// Middleware pour activer CORS
-app.use(cors({
-    origin: 'http://localhost:3000', // Autoriser uniquement les requêtes de cette origine
-    methods: ['GET', 'POST'], // Autoriser uniquement certaines méthodes HTTP
-    allowedHeaders: '*' // Autoriser tous les en-têtes 
-}));
+
 
 
 
