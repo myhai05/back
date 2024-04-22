@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose'); // Importer Mongoose
 const express = require('express');
 
+/*
 // Clé secrète JWT
 const jwtSecret = '12345';
 
@@ -22,17 +23,99 @@ const authenticateJWT = (req, res, next) => {
     }
 };
 
-module.exports = authenticateJWT;
+module.exports = authenticateJWT;*/
 
-module.exports.addContactHandler = async (req, res) => {
-    const userId = req.params.userId; // Récupérer l'ID de l'utilisateur à partir de l'URL
-    const contactData = req.body; // Récupérer les données du nouveau contact depuis le corps de la requête
-
+module.exports.addContact = async (req, res) => {
     try {
-        // Utilisation de la méthode statique addContact pour ajouter un contact à l'utilisateur
-        const updatedUser = await UserModel.addContact(userId, contactData);
-        res.status(200).json({ message: 'Contact added successfully', user: updatedUser });
+        const { userId, contactName, contactPrenom, contactTel } = req.body;
+    
+        // Recherche de l'utilisateur par ID
+        const user = await UserModel.findById(userId);
+    
+        if (!user) {
+          return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+    
+        // Ajout du nouveau contact à la liste des contacts de l'utilisateur
+        user.contacts.push({ contactName, contactPrenom, contactTel });
+    
+        // Enregistrement des modifications dans la base de données
+        await user.save();
+    
+        return res.status(200).json({ message: "Contact ajouté avec succès", user });
+      } catch (error) {
+        console.error("Erreur lors de l'ajout du contact :", error);
+        return res.status(500).json({ message: "Erreur serveur lors de l'ajout du contact" });
+      }
+  };
+
+  module.exports.updateContact = async (req, res) => {
+    try {
+        const { userId, contactId, contactName, contactPrenom, contactTel } = req.body;
+
+        // Recherche de l'utilisateur par ID
+        const user = await UserModel.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        // Recherche du contact dans la liste des contacts de l'utilisateur
+        const contact = user.contacts.find(contact => contact._id.toString()=== contactId.toString());
+
+        if (!contact) {
+            return res.status(404).json({ message: "Contact non trouvé" });
+        }
+
+        // Mise à jour des informations du contact
+        if (contactName) {
+            contact.contactName = contactName;
+        }
+        if (contactPrenom) {
+            contact.contactPrenom = contactPrenom;
+        }
+        if (contactTel) {
+            contact.contactTel = contactTel;
+        }
+
+        // Enregistrement des modifications dans la base de données
+        await user.save();
+
+        return res.status(200).json({ message: "Contact mis à jour avec succès", user });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error("Erreur lors de la mise à jour du contact :", error);
+        return res.status(500).json({ message: "Erreur serveur lors de la mise à jour du contact" });
     }
 };
+
+module.exports.deleteContact = async (req, res) => {
+    try {
+        const { userId, contactId } = req.body;
+
+        // Recherche de l'utilisateur par ID
+        const user = await UserModel.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        // Recherche du contact dans la liste des contacts de l'utilisateur par son ID
+        const contactIndex = user.contacts.findIndex(contact => contact._id.toString() === contactId.toString());
+
+        if (contactIndex === -1) {
+            return res.status(404).json({ message: "Contact non trouvé" });
+        }
+
+        // Suppression du contact de la liste des contacts de l'utilisateur
+        user.contacts.splice(contactIndex, 1);
+
+        // Enregistrement des modifications dans la base de données
+        await user.save();
+
+        return res.status(200).json({ message: "Contact supprimé avec succès", user });
+    } catch (error) {
+        console.error("Erreur lors de la suppression du contact :", error);
+        return res.status(500).json({ message: "Erreur serveur lors de la suppression du contact" });
+    }
+};
+  
