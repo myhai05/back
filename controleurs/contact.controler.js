@@ -118,4 +118,20 @@ module.exports.deleteContact = async (req, res) => {
         return res.status(500).json({ message: "Erreur serveur lors de la suppression du contact" });
     }
 };
+
+module.exports.getAllContacts = async (req, res) => {
+    try {
+        const { userId} = req.body;
+
+        const user = await UserModel.findById(userId);
+
+        const contacts = user.contacts;
+        
+        return res.status(200).json({ message: "Contacts envoyés avec succès", contacts });
+        
+    } catch (error) {
+        console.error("Erreur lors de l'envoi de contacts :", error);
+        return res.status(500).json({ message: "Erreur lors de l'envoi de contacts" });
+    }
+}
   

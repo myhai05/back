@@ -13,7 +13,7 @@ router.delete("/:id", userController.userDelete);
 router.put("/:id", userController.userUpdate);
 router.get("/:id", userController.userInfo);
 
-
+router.get('/contacts/:userId', contactController.getAllContacts);
 router.post('/create-contact/', contactController.addContact);
 router.patch('/update-contact', contactController.updateContact);
 router.delete('/delete-contact/:userId/:contactId', contactController.deleteContact);
