@@ -90,7 +90,7 @@ module.exports.addContact = async (req, res) => {
 
 module.exports.deleteContact = async (req, res) => {
     try {
-        const { userId, contactId } = req.body;
+        const { userId, contactId } = req.params;
 
         // Recherche de l'utilisateur par ID
         const user = await UserModel.findById(userId);
@@ -121,9 +121,13 @@ module.exports.deleteContact = async (req, res) => {
 
 module.exports.getAllContacts = async (req, res) => {
     try {
-        const { userId} = req.body;
+        const { userId} = req.params;
 
         const user = await UserModel.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
 
         const contacts = user.contacts;
         

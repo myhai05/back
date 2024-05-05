@@ -34,16 +34,16 @@ module.exports.signIn = async (req, res) => {
     res.cookie('jwt', token, { httpOnly: true, maxAge });
     const responseData = {
       userId: user._id,
-      email: user.email,
-      picture: user.picture,
+      //email: user.email,
+      //picture: user.picture,
       firstName: user.firstName,
       lastName: user.lastName,
-      contacts: user.contacts.map(contact => ({
-        contactId: contact._id,
-        contactName: contact.contactName,
-        contactPrenom: contact.contactPrenom,
-        contactTel: contact.contactTel
-      })),
+     // contacts: user.contacts.map(contact => ({
+      //  contactId: contact._id,
+     //   contactName: contact.contactName,
+     //   contactPrenom: contact.contactPrenom,
+     //   contactTel: contact.contactTel
+     // })),
       // Include any other fields you want to return
     };
     res.status(200).json({ responseData }); // Retourner un message de succès avec le token   
