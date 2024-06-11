@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose'); // Importer Mongoose
 const express = require('express');
 
+
 /*
 // Clé secrète JWT
 const jwtSecret = '12345';

@@ -3,6 +3,7 @@ const router = express.Router();
 const authController = require('../controleurs/user.controleur');
 const contactController = require('../controleurs/contact.controler');
 const userController = require('../controleurs/user.controleur');
+const { requireAuth } = require('../middleware/auth.middleware');
 
 
 router.post("/register", authController.signUp);
@@ -16,7 +17,7 @@ router.get("/:id", userController.userInfo);
 router.get('/contacts/:userId', contactController.getAllContacts);
 router.post('/create-contact/', contactController.addContact);
 router.patch('/update-contact', contactController.updateContact);
-router.delete('/delete-contact/:userId/:contactId', contactController.deleteContact);
+router.delete('/delete-contact/:userId/:contactId', requireAuth, contactController.deleteContact);
 
 
 

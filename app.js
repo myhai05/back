@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const routeUser = require('./router/user.routes');
 const cookieParser = require('cookie-parser');
+const { checkUser } = require('../back/middleware/auth.middleware');
 
 mongoose.connect('mongodb+srv://mmishk0501:12345@express.swgvavr.mongodb.net/')
     .then(() => {
@@ -36,6 +37,10 @@ app.get('/jwtid', requireAuth, (req, res) => {
   });
 
 app.use('/api/user', routeUser);
+
+app.use(cookieParser());
+
+app.get('*', checkUser);//check user sera appèle pour toutes les routes
 
 //app.get('/login',(req, res) =>{res.send("Hello world")});
 
