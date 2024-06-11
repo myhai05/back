@@ -48,17 +48,24 @@ const userSchema = new mongoose.Schema(//on crée une bibliothéque mongoose dan
 
 // play function before save into display: 'block',
 userSchema.pre("save", async function (next) {
-  const salt = await bcrypt.genSalt();//cela va saler le mdp - ajouter des caractérés 
-  this.password = await bcrypt.hash(this.password, salt);
+  if (!this.isModified('password')) { // Vérifie si le mot de passe a été modifié
+    return next(); // Si non, passe au prochain middleware
+  }
+
+  const salt = await bcrypt.genSalt(); // Génère un sel pour le hachage
+  this.password = await bcrypt.hash(this.password, salt); // Hache le mot de passe
   next();
 });
 
 
 userSchema.statics.login = async function (email, password) {
+    console.log(password);
   const user = await this.findOne({ email });
+        console.log(user.password);
   if (user) {
     // Vérification du mot de passe
     const passwordMatch = await bcrypt.compare(password, user.password);
+    console.log(passwordMatch);
     if (passwordMatch) {
       return user; // Si le mot de passe correspond, retourne l'utilisateur
     } else {

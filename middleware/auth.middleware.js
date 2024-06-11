@@ -5,7 +5,6 @@ const cookieParser = require('cookie-parser');
 
 
 module.exports.checkUser = (req, res, next) => {
-  console.log(req);
   const token = req.cookies.jwt;
 
   if (token) {
